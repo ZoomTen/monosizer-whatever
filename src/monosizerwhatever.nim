@@ -78,9 +78,14 @@ proc process(
     whichOutL[] = singleVolume
     whichOutR[] = singleVolume
 
+when not defined(clang):
+  proc NimMain() {.importc, cdecl.}
+
 proc VSTPluginMain(
     master: ptr AudioMasterCallback
 ): ptr AEffect {.exportc, dynlib, cdecl.} =
+  when not defined(clang):
+    NimMain()
   result = newAeffect()
   result.dispatcher = dispatch
   result.processReplacing = process
