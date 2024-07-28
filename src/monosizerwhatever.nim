@@ -69,12 +69,16 @@ proc process(
       whichInR = cast[ptr cfloat](cast[int](inR) + (i * sizeof(pointer)))
       whichOutL = cast[ptr cfloat](cast[int](outL) + (i * sizeof(pointer)))
       whichOutR = cast[ptr cfloat](cast[int](outR) + (i * sizeof(pointer)))
-      singleVolume =
-        if abs(whichInR[]) <= 0.001:
-          # Could use == 0, but then there's a weird audio glitch sometimes
-          whichInL[]
+      singleVolume = (
+        let
+          gotL = whichInL[]
+          gotR = whichInR[]
+          combine = gotL + gotR
+        if gotL == gotR:
+          combine / 2.0
         else:
-          whichInR[]
+          combine
+      )
     whichOutL[] = singleVolume
     whichOutR[] = singleVolume
 
